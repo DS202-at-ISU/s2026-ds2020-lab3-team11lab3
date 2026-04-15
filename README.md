@@ -115,30 +115,33 @@ library(tidyverse)
 
 ``` r
 deaths <- av %>%
-  pivot_longer(cols = Death1:Death5, names_to = "Time", values_to = "Death") %>%
-  mutate(Time = parse_number(Time)) %>%
+  select(URL, Name.Alias, Death1:Death5, Return1:Return5) %>%
+  pivot_longer(
+    cols = c(Death1:Death5, Return1:Return5),
+    names_to = c(".value", "Time"),
+    names_pattern = "(Death|Return)(\\d)"
+  ) %>%
+  mutate(Time = as.numeric(Time)) %>%
   filter(Death != "")
+# pivoted the death and return columns for later, late edit
 
 deaths
 ```
 
-    ## # A tibble: 282 × 14
-    ##    URL                Name.Alias Appearances Current. Gender Probationary.Introl
-    ##    <chr>              <chr>            <int> <chr>    <chr>  <chr>              
-    ##  1 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
-    ##  2 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
-    ##  3 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
-    ##  4 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
-    ##  5 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
-    ##  6 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
-    ##  7 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
-    ##  8 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
-    ##  9 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
-    ## 10 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
-    ## # ℹ 272 more rows
-    ## # ℹ 8 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
-    ## #   Years.since.joining <int>, Honorary <chr>, Return5 <chr>, Notes <chr>,
-    ## #   Time <dbl>, Death <chr>
+    ## # A tibble: 194 × 5
+    ##    URL                                             Name.Alias  Time Death Return
+    ##    <chr>                                           <chr>      <dbl> <chr> <chr> 
+    ##  1 http://marvel.wikia.com/Henry_Pym_(Earth-616)   "Henry Jo…     1 YES   "NO"  
+    ##  2 http://marvel.wikia.com/Janet_van_Dyne_(Earth-… "Janet va…     1 YES   "YES" 
+    ##  3 http://marvel.wikia.com/Anthony_Stark_(Earth-6… "Anthony …     1 YES   "YES" 
+    ##  4 http://marvel.wikia.com/Robert_Bruce_Banner_(E… "Robert B…     1 YES   "YES" 
+    ##  5 http://marvel.wikia.com/Thor_Odinson_(Earth-61… "Thor Odi…     1 YES   "YES" 
+    ##  6 http://marvel.wikia.com/Thor_Odinson_(Earth-61… "Thor Odi…     2 YES   "NO"  
+    ##  7 http://marvel.wikia.com/Richard_Jones_(Earth-6… "Richard …     1 NO    ""    
+    ##  8 http://marvel.wikia.com/Steven_Rogers_(Earth-6… "Steven R…     1 YES   "YES" 
+    ##  9 http://marvel.wikia.com/Clint_Barton_(Earth-61… "Clinton …     1 YES   "YES" 
+    ## 10 http://marvel.wikia.com/Clint_Barton_(Earth-61… "Clinton …     2 YES   "YES" 
+    ## # ℹ 184 more rows
 
 - Dominic’s note: A ton of double entries, but that should be fine
   because they don’t really conflict and many characters come back or
@@ -148,30 +151,29 @@ Similarly, deal with the returns of characters.
 
 ``` r
 returns <- av %>%
+  select(URL, Name.Alias, Return1:Return5) %>%
   pivot_longer(cols = Return1:Return5, names_to = "Time", values_to = "Return") %>%
   mutate(Time = parse_number(Time)) %>%
   filter(Return != "")
+# added a select, late edit
 
 returns
 ```
 
-    ## # A tibble: 110 × 14
-    ##    URL                Name.Alias Appearances Current. Gender Probationary.Introl
-    ##    <chr>              <chr>            <int> <chr>    <chr>  <chr>              
-    ##  1 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
-    ##  2 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
-    ##  3 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
-    ##  4 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
-    ##  5 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
-    ##  6 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
-    ##  7 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
-    ##  8 http://marvel.wik… "Steven R…        3458 YES      MALE   ""                 
-    ##  9 http://marvel.wik… "Clinton …        1456 YES      MALE   ""                 
-    ## 10 http://marvel.wik… "Clinton …        1456 YES      MALE   ""                 
+    ## # A tibble: 110 × 4
+    ##    URL                                                   Name.Alias  Time Return
+    ##    <chr>                                                 <chr>      <dbl> <chr> 
+    ##  1 http://marvel.wikia.com/Henry_Pym_(Earth-616)         "Henry Jo…     1 NO    
+    ##  2 http://marvel.wikia.com/Janet_van_Dyne_(Earth-616)    "Janet va…     1 YES   
+    ##  3 http://marvel.wikia.com/Anthony_Stark_(Earth-616)     "Anthony …     1 YES   
+    ##  4 http://marvel.wikia.com/Robert_Bruce_Banner_(Earth-6… "Robert B…     1 YES   
+    ##  5 http://marvel.wikia.com/Thor_Odinson_(Earth-616)      "Thor Odi…     1 YES   
+    ##  6 http://marvel.wikia.com/Thor_Odinson_(Earth-616)      "Thor Odi…     2 YES   
+    ##  7 http://marvel.wikia.com/Thor_Odinson_(Earth-616)      "Thor Odi…     2 NO    
+    ##  8 http://marvel.wikia.com/Steven_Rogers_(Earth-616)     "Steven R…     1 YES   
+    ##  9 http://marvel.wikia.com/Clint_Barton_(Earth-616)      "Clinton …     1 YES   
+    ## 10 http://marvel.wikia.com/Clint_Barton_(Earth-616)      "Clinton …     2 YES   
     ## # ℹ 100 more rows
-    ## # ℹ 8 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
-    ## #   Years.since.joining <int>, Honorary <chr>, Death1 <chr>, Notes <chr>,
-    ## #   Time <dbl>, Return <chr>
 
 - Dominic’s note: similar to deaths, there are a ton of characters that
   will duplicate due to dying and returning more than once
@@ -192,9 +194,9 @@ avg_deaths
     ## # A tibble: 1 × 1
     ##   avg_deaths
     ##        <dbl>
-    ## 1       2.27
+    ## 1       1.39
 
-- Dominic’s notes: averaging 2.3 deaths per avenger is pretty good. Not
+- Dominic’s notes: averaging 1.4 deaths per avenger is pretty good. Not
   super human though.
 
 ## Individually
@@ -208,9 +210,36 @@ possible.
 
 ### FiveThirtyEight Statement
 
-> Quote the statement you are planning to fact-check.
+> Quote the statement you are planning to fact-check. Dominic’s -
+> “2-in-3 chance of returning from first death, but only 50% from a
+> second or third”
 
 ### Include the code
+
+Dominic’s -
+
+``` r
+death_return_rates <- deaths %>%
+  filter(Death == "YES") %>%
+  group_by(Time) %>%
+  summarise(
+    total_deaths = n(),
+    total_returns = sum(Return == "YES", na.rm = TRUE),
+    return_rate = round(total_returns / total_deaths, 2)
+  )
+
+
+death_return_rates
+```
+
+    ## # A tibble: 5 × 4
+    ##    Time total_deaths total_returns return_rate
+    ##   <dbl>        <int>         <int>       <dbl>
+    ## 1     1           69            46        0.67
+    ## 2     2           16             8        0.5 
+    ## 3     3            2             1        0.5 
+    ## 4     4            1             1        1   
+    ## 5     5            1             1        1
 
 Make sure to include the code to derive the (numeric) fact for the
 statement
@@ -219,6 +248,12 @@ statement
 
 Include at least one sentence discussing the result of your
 fact-checking endeavor.
+
+Dominic’s answer - Yeah he is exactly right that there is a “2-in-3
+chance of returning from first death, but only 50% from a second or
+third”. Looking at the total returns / total deaths shows that he was
+pretty spot on. Even though the 3rd time a character has returned has a
+sample size of 2, which I feel like is cheap.
 
 Upload your changes to the repository. Discuss and refine answers as a
 team.
