@@ -1,4 +1,3 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/LEAcVKPz)
 
 <!-- README.md is generated from README.Rmd. Please edit the README.Rmd file -->
 
@@ -66,16 +65,137 @@ head(av)
     ## 5                                                      Dies in Fear Itself brought back because that's kind of the whole point. Second death in Time Runs Out has not yet returned
     ## 6                                                                                                                                                                             <NA>
 
+``` r
+str(av)
+```
+
+    ## 'data.frame':    173 obs. of  21 variables:
+    ##  $ URL                        : chr  "http://marvel.wikia.com/Henry_Pym_(Earth-616)" "http://marvel.wikia.com/Janet_van_Dyne_(Earth-616)" "http://marvel.wikia.com/Anthony_Stark_(Earth-616)" "http://marvel.wikia.com/Robert_Bruce_Banner_(Earth-616)" ...
+    ##  $ Name.Alias                 : chr  "Henry Jonathan \"Hank\" Pym" "Janet van Dyne" "Anthony Edward \"Tony\" Stark" "Robert Bruce Banner" ...
+    ##  $ Appearances                : int  1269 1165 3068 2089 2402 612 3458 1456 769 1214 ...
+    ##  $ Current.                   : chr  "YES" "YES" "YES" "YES" ...
+    ##  $ Gender                     : chr  "MALE" "FEMALE" "MALE" "MALE" ...
+    ##  $ Probationary.Introl        : chr  "" "" "" "" ...
+    ##  $ Full.Reserve.Avengers.Intro: chr  "Sep-63" "Sep-63" "Sep-63" "Sep-63" ...
+    ##  $ Year                       : int  1963 1963 1963 1963 1963 1963 1964 1965 1965 1965 ...
+    ##  $ Years.since.joining        : int  52 52 52 52 52 52 51 50 50 50 ...
+    ##  $ Honorary                   : chr  "Full" "Full" "Full" "Full" ...
+    ##  $ Death1                     : chr  "YES" "YES" "YES" "YES" ...
+    ##  $ Return1                    : chr  "NO" "YES" "YES" "YES" ...
+    ##  $ Death2                     : chr  "" "" "" "" ...
+    ##  $ Return2                    : chr  "" "" "" "" ...
+    ##  $ Death3                     : chr  "" "" "" "" ...
+    ##  $ Return3                    : chr  "" "" "" "" ...
+    ##  $ Death4                     : chr  "" "" "" "" ...
+    ##  $ Return4                    : chr  "" "" "" "" ...
+    ##  $ Death5                     : chr  "" "" "" "" ...
+    ##  $ Return5                    : chr  "" "" "" "" ...
+    ##  $ Notes                      : chr  "Merged with Ultron in Rage of Ultron Vol. 1. A funeral was held. " "Dies in Secret Invasion V1:I8. Actually was sent tto Microverse later recovered" "Death: \"Later while under the influence of Immortus Stark committed a number of horrible acts and was killed.'"| __truncated__ "Dies in Ghosts of the Future arc. However \"he had actually used a hidden Pantheon base to survive\"" ...
+
 Get the data into a format where the five columns for Death\[1-5\] are
 replaced by two columns: Time, and Death. Time should be a number
 between 1 and 5 (look into the function `parse_number`); Death is a
 categorical variables with values “yes”, “no” and ““. Call the resulting
 data set `deaths`.
 
+``` r
+library(tidyverse)
+```
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.2.0     ✔ readr     2.1.6
+    ## ✔ forcats   1.0.1     ✔ stringr   1.6.0
+    ## ✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+    ## ✔ purrr     1.2.1     
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
+deaths <- av %>%
+  pivot_longer(cols = Death1:Death5, names_to = "Time", values_to = "Death") %>%
+  mutate(Time = parse_number(Time)) %>%
+  filter(Death != "")
+
+deaths
+```
+
+    ## # A tibble: 282 × 14
+    ##    URL                Name.Alias Appearances Current. Gender Probationary.Introl
+    ##    <chr>              <chr>            <int> <chr>    <chr>  <chr>              
+    ##  1 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
+    ##  2 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
+    ##  3 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
+    ##  4 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
+    ##  5 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
+    ##  6 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
+    ##  7 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
+    ##  8 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
+    ##  9 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
+    ## 10 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
+    ## # ℹ 272 more rows
+    ## # ℹ 8 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
+    ## #   Years.since.joining <int>, Honorary <chr>, Return5 <chr>, Notes <chr>,
+    ## #   Time <dbl>, Death <chr>
+
+- Dominic’s note: A ton of double entries, but that should be fine
+  because they don’t really conflict and many characters come back or
+  die several times
+
 Similarly, deal with the returns of characters.
+
+``` r
+returns <- av %>%
+  pivot_longer(cols = Return1:Return5, names_to = "Time", values_to = "Return") %>%
+  mutate(Time = parse_number(Time)) %>%
+  filter(Return != "")
+
+returns
+```
+
+    ## # A tibble: 110 × 14
+    ##    URL                Name.Alias Appearances Current. Gender Probationary.Introl
+    ##    <chr>              <chr>            <int> <chr>    <chr>  <chr>              
+    ##  1 http://marvel.wik… "Henry Jo…        1269 YES      MALE   ""                 
+    ##  2 http://marvel.wik… "Janet va…        1165 YES      FEMALE ""                 
+    ##  3 http://marvel.wik… "Anthony …        3068 YES      MALE   ""                 
+    ##  4 http://marvel.wik… "Robert B…        2089 YES      MALE   ""                 
+    ##  5 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
+    ##  6 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
+    ##  7 http://marvel.wik… "Thor Odi…        2402 YES      MALE   ""                 
+    ##  8 http://marvel.wik… "Steven R…        3458 YES      MALE   ""                 
+    ##  9 http://marvel.wik… "Clinton …        1456 YES      MALE   ""                 
+    ## 10 http://marvel.wik… "Clinton …        1456 YES      MALE   ""                 
+    ## # ℹ 100 more rows
+    ## # ℹ 8 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
+    ## #   Years.since.joining <int>, Honorary <chr>, Death1 <chr>, Notes <chr>,
+    ## #   Time <dbl>, Return <chr>
+
+- Dominic’s note: similar to deaths, there are a ton of characters that
+  will duplicate due to dying and returning more than once
 
 Based on these datasets calculate the average number of deaths an
 Avenger suffers.
+
+``` r
+avg_deaths <- deaths %>%
+  filter(Death == "YES") %>%
+  group_by(Name.Alias) %>%
+  summarise(num_deaths = n()) %>%
+  summarise(avg_deaths = mean(num_deaths))
+
+avg_deaths
+```
+
+    ## # A tibble: 1 × 1
+    ##   avg_deaths
+    ##        <dbl>
+    ## 1       2.27
+
+- Dominic’s notes: averaging 2.3 deaths per avenger is pretty good. Not
+  super human though.
 
 ## Individually
 
