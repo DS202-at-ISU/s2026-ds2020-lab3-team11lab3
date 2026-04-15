@@ -210,9 +210,10 @@ possible.
 
 ### FiveThirtyEight Statement
 
-> Quote the statement you are planning to fact-check. Dominic’s -
-> “2-in-3 chance of returning from first death, but only 50% from a
-> second or third”
+> Quote the statement you are planning to fact-check.
+
+- Dominic’s statement from doc: “2-in-3 chance of returning from first
+  death, but only 50% from a second or third”
 
 ### Include the code
 
