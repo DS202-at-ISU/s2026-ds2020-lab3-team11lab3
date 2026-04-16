@@ -100,20 +100,7 @@ data set `deaths`.
 
 ``` r
 library(tidyverse)
-```
 
-    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ dplyr     1.2.0     ✔ readr     2.1.6
-    ## ✔ forcats   1.0.1     ✔ stringr   1.6.0
-    ## ✔ ggplot2   4.0.2     ✔ tibble    3.3.1
-    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.2
-    ## ✔ purrr     1.2.1     
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
 deaths <- av %>%
   select(URL, Name.Alias, Death1:Death5, Return1:Return5) %>%
   pivot_longer(
@@ -147,6 +134,12 @@ deaths
   because they don’t really conflict and many characters come back or
   die several times
 
+- Tanisha’s note: It makes sense that some names show up more than once
+  here, since this table records each death event by time point instead
+  of keeping only one row per character. Those repeated rows are useful
+  because they track separate events rather than creating
+  contradictions.
+
 Similarly, deal with the returns of characters.
 
 ``` r
@@ -178,6 +171,11 @@ returns
 - Dominic’s note: similar to deaths, there are a ton of characters that
   will duplicate due to dying and returning more than once
 
+- Tanisha’s note: The return data also includes repeated names, which is
+  expected because several Avengers reappear after being gone more than
+  one time. Keeping those repeated observations lets us follow each
+  comeback across the different time values.
+
 Based on these datasets calculate the average number of deaths an
 Avenger suffers.
 
@@ -199,6 +197,11 @@ avg_deaths
 - Dominic’s notes: averaging 1.4 deaths per avenger is pretty good. Not
   super human though.
 
+- Tanisha’s note: The mean comes out to about 1.4 deaths for the
+  Avengers who died at least once, so most characters in this summary do
+  not stay dead many times. That average suggests repeated deaths
+  happen, but they are still fairly limited overall.
+
 ## Individually
 
 For each team member, copy this part of the report.
@@ -215,9 +218,13 @@ possible.
 - Dominic’s statement from doc: “2-in-3 chance of returning from first
   death, but only 50% from a second or third”
 
+- Tanisha’s note: The statement I am checking is whether Avengers
+  usually return after an initial death, but are less likely to come
+  back after later deaths.
+
 ### Include the code
 
-Dominic’s -
+Dominic’s code -
 
 ``` r
 death_return_rates <- deaths %>%
@@ -242,6 +249,30 @@ death_return_rates
     ## 4     4            1             1        1   
     ## 5     5            1             1        1
 
+Tanisha’s code -
+
+``` r
+death_return_rates <- deaths %>%
+  filter(Death == "YES") %>%
+  group_by(Time) %>%
+  summarise(
+    deaths_at_time = n(),
+    returns_at_time = sum(Return == "YES", na.rm = TRUE),
+    return_rate = round(returns_at_time / deaths_at_time, 2)
+  )
+
+death_return_rates
+```
+
+    ## # A tibble: 5 × 4
+    ##    Time deaths_at_time returns_at_time return_rate
+    ##   <dbl>          <int>           <int>       <dbl>
+    ## 1     1             69              46        0.67
+    ## 2     2             16               8        0.5 
+    ## 3     3              2               1        0.5 
+    ## 4     4              1               1        1   
+    ## 5     5              1               1        1
+
 Make sure to include the code to derive the (numeric) fact for the
 statement
 
@@ -255,6 +286,12 @@ chance of returning from first death, but only 50% from a second or
 third”. Looking at the total returns / total deaths shows that he was
 pretty spot on. Even though the 3rd time a character has returned has a
 sample size of 2, which I feel like is cheap.
+
+Tanisha’s answer - The results support the statement because the return
+rate after a first death is 0.67, which is about two-thirds, while the
+return rate after a second and third death is 0.50. The fourth and fifth
+deaths show a return rate of 1.00, but those values are based on only
+one case each, so they are not as convincing as the earlier results.
 
 Upload your changes to the repository. Discuss and refine answers as a
 team.

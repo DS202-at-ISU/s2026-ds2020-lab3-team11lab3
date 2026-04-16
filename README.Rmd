@@ -52,6 +52,8 @@ deaths
 ```
 - Dominic's note: A ton of double entries, but that should be fine because they don't really conflict and many characters come back or die several times
 
+- Tanisha's note: It makes sense that some names show up more than once here, since this table records each death event by time point instead of keeping only one row per character. Those repeated rows are useful because they track separate events rather than creating contradictions.
+
 Similarly, deal with the returns of characters.
 ```{r}
 returns <- av %>%
@@ -65,6 +67,8 @@ returns
 ```
 - Dominic's note: similar to deaths, there are a ton of characters that will duplicate due to dying and returning more than once
 
+- Tanisha's note: The return data also includes repeated names, which is expected because several Avengers reappear after being gone more than one time. Keeping those repeated observations lets us follow each comeback across the different time values.
+
 Based on these datasets calculate the average number of deaths an Avenger suffers. 
 ```{r}
 avg_deaths <- deaths %>%
@@ -76,6 +80,8 @@ avg_deaths <- deaths %>%
 avg_deaths
 ```
 - Dominic's notes: averaging 1.4 deaths per avenger is pretty good. Not super human though.
+
+- Tanisha's note: The mean comes out to about 1.4 deaths for the Avengers who died at least once, so most characters in this summary do not stay dead many times. That average suggests repeated deaths happen, but they are still fairly limited overall.
 
 ## Individually
 
@@ -89,8 +95,10 @@ Each team member picks one of the statements in the FiveThirtyEight [analysis](h
 
 - Dominic's statement from doc: "2-in-3 chance of returning from first death, but only 50% from a second or third"
 
+- Tanisha's note: The statement I am checking is whether Avengers usually return after an initial death, but are less likely to come back after later deaths.
+
 ### Include the code
-Dominic's - 
+Dominic's code - 
 ```{r}
 death_return_rates <- deaths %>%
   filter(Death == "YES") %>%
@@ -106,6 +114,20 @@ death_return_rates
 
 ```
 
+Tanisha's code -
+
+```{r}
+death_return_rates <- deaths %>%
+  filter(Death == "YES") %>%
+  group_by(Time) %>%
+  summarise(
+    deaths_at_time = n(),
+    returns_at_time = sum(Return == "YES", na.rm = TRUE),
+    return_rate = round(returns_at_time / deaths_at_time, 2)
+  )
+
+death_return_rates
+```
 
 Make sure to include the code to derive the (numeric) fact for the statement
 
@@ -114,5 +136,7 @@ Make sure to include the code to derive the (numeric) fact for the statement
 Include at least one sentence discussing the result of your fact-checking endeavor.
 
 Dominic's answer - Yeah he is exactly right that there is a "2-in-3 chance of returning from first death, but only 50% from a second or third". Looking at the total returns / total deaths shows that he was pretty spot on. Even though the 3rd time a character has returned has a sample size of 2, which I feel like is cheap.
+
+Tanisha's answer -  The results support the statement because the return rate after a first death is 0.67, which is about two-thirds, while the return rate after a second and third death is 0.50. The fourth and fifth deaths show a return rate of 1.00, but those values are based on only one case each, so they are not as convincing as the earlier results.
 
 Upload your changes to the repository. Discuss and refine answers as a team.
