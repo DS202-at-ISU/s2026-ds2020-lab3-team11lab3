@@ -95,7 +95,8 @@ Each team member picks one of the statements in the FiveThirtyEight [analysis](h
 
 - Dominic's statement from doc: "2-in-3 chance of returning from first death, but only 50% from a second or third"
 
-- Tanisha's note: The statement I am checking is whether Avengers usually return after an initial death, but are less likely to come back after later deaths.
+- Tanisha's note: Characters who return tend to die again.
+
 
 ### Include the code
 Dominic's code - 
@@ -117,16 +118,25 @@ death_return_rates
 Tanisha's code -
 
 ```{r}
-death_return_rates <- deaths %>%
+returned_chars <- returns %>%
+  filter(Return == "YES") %>%
+  distinct(Name.Alias)
+
+repeat_deaths <- deaths %>%
   filter(Death == "YES") %>%
-  group_by(Time) %>%
+  group_by(Name.Alias) %>%
+  summarise(num_deaths = n()) %>%
+  mutate(died_multiple_times = num_deaths > 1)
+
+analysis <- returned_chars %>%
+  left_join(repeat_deaths, by = "Name.Alias") %>%
   summarise(
-    deaths_at_time = n(),
-    returns_at_time = sum(Return == "YES", na.rm = TRUE),
-    return_rate = round(returns_at_time / deaths_at_time, 2)
+    total_returned = n(),
+    multiple_deaths = sum(died_multiple_times, na.rm = TRUE),
+    proportion = round(multiple_deaths / total_returned, 2)
   )
 
-death_return_rates
+analysis
 ```
 
 Make sure to include the code to derive the (numeric) fact for the statement
@@ -137,6 +147,6 @@ Include at least one sentence discussing the result of your fact-checking endeav
 
 Dominic's answer - Yeah he is exactly right that there is a "2-in-3 chance of returning from first death, but only 50% from a second or third". Looking at the total returns / total deaths shows that he was pretty spot on. Even though the 3rd time a character has returned has a sample size of 2, which I feel like is cheap.
 
-Tanisha's answer -  The results support the statement because the return rate after a first death is 0.67, which is about two-thirds, while the return rate after a second and third death is 0.50. The fourth and fifth deaths show a return rate of 1.00, but those values are based on only one case each, so they are not as convincing as the earlier results.
+Tanisha's answer -  The results partially support the statement. Out of 45 characters who returned at least once, 16 of them died multiple times, giving a proportion of 0.36. This means that about 36% of returning characters go on to die again, which suggests that repeat deaths are somewhat common, but not the majority. Therefore, while the statement is directionally true, it slightly overstates how often returning characters die again.
 
 Upload your changes to the repository. Discuss and refine answers as a team.
