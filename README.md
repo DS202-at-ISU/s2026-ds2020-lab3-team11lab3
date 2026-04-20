@@ -100,7 +100,22 @@ data set `deaths`.
 
 ``` r
 library(tidyverse)
+```
 
+    ## Warning: package 'lubridate' was built under R version 4.5.3
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.1.4     ✔ readr     2.1.6
+    ## ✔ forcats   1.0.1     ✔ stringr   1.6.0
+    ## ✔ ggplot2   4.0.1     ✔ tibble    3.3.1
+    ## ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+    ## ✔ purrr     1.2.1     
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
 deaths <- av %>%
   select(URL, Name.Alias, Death1:Death5, Return1:Return5) %>%
   pivot_longer(
@@ -140,6 +155,9 @@ deaths
   because they track separate events rather than creating
   contradictions.
 
+- Wyatt’s note: Reshaping these columns makes it easier to count deaths
+  as its not 5 seperate columns now.
+
 Similarly, deal with the returns of characters.
 
 ``` r
@@ -176,6 +194,9 @@ returns
   one time. Keeping those repeated observations lets us follow each
   comeback across the different time values.
 
+- Wyatt’s note: Parse_number on the time variable helps make the table
+  more numerically pleasing.
+
 Based on these datasets calculate the average number of deaths an
 Avenger suffers.
 
@@ -202,6 +223,9 @@ avg_deaths
   not stay dead many times. That average suggests repeated deaths
   happen, but they are still fairly limited overall.
 
+- Wyatt’s note: Death is not permanent in the comic world as some
+  character have died multiple times.
+
 ## Individually
 
 For each team member, copy this part of the report.
@@ -219,6 +243,8 @@ possible.
   death, but only 50% from a second or third”
 
 - Tanisha’s note: Characters who return tend to die again.
+
+- Wyatt’s note: 69 of the avengers have died at least once.
 
 ### Include the code
 
@@ -276,6 +302,22 @@ analysis
     ##            <int>           <int>      <dbl>
     ## 1             45              16       0.36
 
+Wyatt’s Code -
+
+``` r
+wyatt_check <- av %>%
+  summarise(
+    total_avengers = n(),
+    died_at_least_once = sum(Death1 == "YES", na.rm = TRUE),
+    proportion = died_at_least_once / total_avengers
+  )
+
+wyatt_check
+```
+
+    ##   total_avengers died_at_least_once proportion
+    ## 1            173                 69  0.3988439
+
 Make sure to include the code to derive the (numeric) fact for the
 statement
 
@@ -297,6 +339,10 @@ returning characters go on to die again, which suggests that repeat
 deaths are somewhat common, but not the majority. Therefore, while the
 statement is directionally true, it slightly overstates how often
 returning characters die again.
+
+Wyatt’s Answer: The dataset shows that 69 out of 173 Avengers died at
+least once this is about 39.9% so it supports the statement that 40% of
+avengers died at least one time.
 
 Upload your changes to the repository. Discuss and refine answers as a
 team.

@@ -54,6 +54,9 @@ deaths
 
 - Tanisha's note: It makes sense that some names show up more than once here, since this table records each death event by time point instead of keeping only one row per character. Those repeated rows are useful because they track separate events rather than creating contradictions.
 
+- Wyatt's note: Reshaping these columns makes it easier to count deaths as its not 5 seperate columns now. 
+
+
 Similarly, deal with the returns of characters.
 ```{r}
 returns <- av %>%
@@ -69,6 +72,9 @@ returns
 
 - Tanisha's note: The return data also includes repeated names, which is expected because several Avengers reappear after being gone more than one time. Keeping those repeated observations lets us follow each comeback across the different time values.
 
+- Wyatt's note: Parse_number on the time variable helps make the table more numerically pleasing.
+
+
 Based on these datasets calculate the average number of deaths an Avenger suffers. 
 ```{r}
 avg_deaths <- deaths %>%
@@ -83,6 +89,8 @@ avg_deaths
 
 - Tanisha's note: The mean comes out to about 1.4 deaths for the Avengers who died at least once, so most characters in this summary do not stay dead many times. That average suggests repeated deaths happen, but they are still fairly limited overall.
 
+- Wyatt's note: Death is not permanent in the comic world as some character have died multiple times. 
+
 ## Individually
 
 For each team member, copy this part of the report. 
@@ -96,6 +104,8 @@ Each team member picks one of the statements in the FiveThirtyEight [analysis](h
 - Dominic's statement from doc: "2-in-3 chance of returning from first death, but only 50% from a second or third"
 
 - Tanisha's note: Characters who return tend to die again.
+
+- Wyatt's note: 69 of the avengers have died at least once. 
 
 
 ### Include the code
@@ -139,6 +149,22 @@ analysis <- returned_chars %>%
 analysis
 ```
 
+Wyatt's Code -
+
+```{r}
+
+wyatt_check <- av %>%
+  summarise(
+    total_avengers = n(),
+    died_at_least_once = sum(Death1 == "YES", na.rm = TRUE),
+    proportion = died_at_least_once / total_avengers
+  )
+
+wyatt_check
+
+```
+
+
 Make sure to include the code to derive the (numeric) fact for the statement
 
 ### Include your answer
@@ -148,5 +174,7 @@ Include at least one sentence discussing the result of your fact-checking endeav
 Dominic's answer - Yeah he is exactly right that there is a "2-in-3 chance of returning from first death, but only 50% from a second or third". Looking at the total returns / total deaths shows that he was pretty spot on. Even though the 3rd time a character has returned has a sample size of 2, which I feel like is cheap.
 
 Tanisha's answer -  The results partially support the statement. Out of 45 characters who returned at least once, 16 of them died multiple times, giving a proportion of 0.36. This means that about 36% of returning characters go on to die again, which suggests that repeat deaths are somewhat common, but not the majority. Therefore, while the statement is directionally true, it slightly overstates how often returning characters die again.
+
+Wyatt's Answer: The dataset shows that 69 out of 173 Avengers died at least once this is about 39.9% so it supports the statement that 40% of avengers died at least one time. 
 
 Upload your changes to the repository. Discuss and refine answers as a team.
