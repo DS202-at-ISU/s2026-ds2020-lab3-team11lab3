@@ -102,12 +102,10 @@ data set `deaths`.
 library(tidyverse)
 ```
 
-    ## Warning: package 'lubridate' was built under R version 4.5.3
-
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ dplyr     1.1.4     ✔ readr     2.1.6
+    ## ✔ dplyr     1.2.0     ✔ readr     2.2.0
     ## ✔ forcats   1.0.1     ✔ stringr   1.6.0
-    ## ✔ ggplot2   4.0.1     ✔ tibble    3.3.1
+    ## ✔ ggplot2   4.0.2     ✔ tibble    3.3.1
     ## ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
     ## ✔ purrr     1.2.1     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -158,6 +156,10 @@ deaths
 - Wyatt’s note: Reshaping these columns makes it easier to count deaths
   as its not 5 seperate columns now.
 
+- Praneet’s note: It makes sense to move from wide to long as it is
+  easier to filter and count all deaths across all time points without
+  the need of checking 5 seperate columns.
+
 Similarly, deal with the returns of characters.
 
 ``` r
@@ -197,6 +199,9 @@ returns
 - Wyatt’s note: Parse_number on the time variable helps make the table
   more numerically pleasing.
 
+- Praneet’s note: Getting rid of empty strings ensures that only useful
+  tuples remain allowing for a clean dataset ready for analysis.
+
 Based on these datasets calculate the average number of deaths an
 Avenger suffers.
 
@@ -226,6 +231,11 @@ avg_deaths
 - Wyatt’s note: Death is not permanent in the comic world as some
   character have died multiple times.
 
+- Praneet’s note: An average of 1.4 deaths per avenger shows that dying
+  is common but they only die once (not true death) which sounds like a
+  crazy statement but makes sense due to the fictional circumstances of
+  comics.
+
 ## Individually
 
 For each team member, copy this part of the report.
@@ -245,6 +255,9 @@ possible.
 - Tanisha’s note: Characters who return tend to die again.
 
 - Wyatt’s note: 69 of the avengers have died at least once.
+
+- Praneet’s note: There are 89 total deaths and on 57 occasions, the
+  avenger made a comeback.
 
 ### Include the code
 
@@ -318,6 +331,22 @@ wyatt_check
     ##   total_avengers died_at_least_once proportion
     ## 1            173                 69  0.3988439
 
+Praneet’s Code -
+
+``` r
+death_return_summary <- deaths %>%
+  summarise (
+    total_deaths = sum(Death == "YES", na.rm = TRUE),
+    total_comebacks = sum(Return == "YES", na.rm = TRUE)
+  )
+death_return_summary
+```
+
+    ## # A tibble: 1 × 2
+    ##   total_deaths total_comebacks
+    ##          <int>           <int>
+    ## 1           89              57
+
 Make sure to include the code to derive the (numeric) fact for the
 statement
 
@@ -343,6 +372,11 @@ returning characters die again.
 Wyatt’s Answer: The dataset shows that 69 out of 173 Avengers died at
 least once this is about 39.9% so it supports the statement that 40% of
 avengers died at least one time.
+
+Praneet’s Answer: The data shows that there are 89 total deaths and 57
+comebacks which matches the claim exactly. This shows that there is a
+comeback rate of around 64% showing that a majority of Avenger deaths
+are not permanent.
 
 Upload your changes to the repository. Discuss and refine answers as a
 team.
